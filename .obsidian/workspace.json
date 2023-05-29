@@ -1,0 +1,178 @@
+{
+  "main": {
+    "id": "2cb76a5365ec0cc4",
+    "type": "split",
+    "children": [
+      {
+        "id": "c5908b293a945469",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "857991b107d6f4f9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Ricerca in ampiezza.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "8c25353a22dfb466",
+    "type": "split",
+    "children": [
+      {
+        "id": "343937aa6c30bdf0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "421512676fc9d683",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "8bd9d73abb88e932",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "Ottimalità",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "84bf4779e39e26d5",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "8a64db1ec1fe2fb8",
+    "type": "split",
+    "children": [
+      {
+        "id": "609db8a766817a70",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2f815eda46e45d1e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Ricerca in ampiezza.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "6709bdff88d44cad",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Ricerca in ampiezza.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "ecde1111ea09a2e5",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "b9316c7f117e3214",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Ricerca in ampiezza.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "857991b107d6f4f9",
+  "lastOpenFiles": [
+    "imgs/breadth-complexity-table.png",
+    "Ricerca in ampiezza.md",
+    "Intelligenza Artificiale.md",
+    "imgs/breadth-first-search.png",
+    "draw-io/breadth-first-search.drawio",
+    "draw-io/branch-first-search.drawio",
+    "draw-io/romania-problem.drawio",
+    "draw-io/graph-base - Copia.drawio",
+    "imgs/graph-edge.png",
+    "draw-io/graph-edge.drawio",
+    "draw-io/graph-.drawio",
+    "imgs/search-graph.png",
+    "draw-io/search-graph.drawio",
+    "draw-io/graph-base.drawio.crswap",
+    "draw-io/graph-base.drawio",
+    "draw-io",
+    "imgs/search-tree.drawio.png",
+    "Mondo dell'Aspirapolvere.md",
+    "Intenzionalità.md",
+    "Mondo Giocattolo.md",
+    "imgs/vacuum-world.png",
+    "imgs/vacuum-world.png",
+    "imgs/ai-software-design.png",
+    "imgs/mondo-giocattolo.png",
+    "Untitled.canvas",
+    "Untitled 1.canvas"
+  ]
+}
