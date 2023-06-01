@@ -18,11 +18,12 @@ Qualora non si abbia ancora trovato uno stato obiettivo, si visitano i conseguen
 
 E' un algoritmo con delle caratteristiche positive quali la semplicità di implementazione, ma all'atto pratico nel caso in cui la ricerca di debba estendere in profondità assume temporalmente e spazialmente valori inaccettabili.
 
-Avendo $O(b^{d+1})$ come complessità temporale e complessità spaziale:
+Avendo $O(b^{d+1})$ come complessità temporale e complessità spaziale,
 supponiamo che:
 - il branching factor b=10
 - che vengano generati 10.000 nodi/sec
 - un nodo occupi 1000 byte
+
 ![[breadth-complexity-table.png]]
 
 

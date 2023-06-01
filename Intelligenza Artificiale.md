@@ -199,12 +199,18 @@ Le strategia di ricerca sono suddivise inoltre in due tipologie:
    - **Multiagente** o **con avversario**
    - **CSP**: **C**onstraint **S**atisfaction **P**roblem
 
+La scrittura della strategia di ricerca può essere effettuata tramite la tradizionale programmazione imperativa, in quanto, per esempio, si tratta semplicemente di realizzare un algoritmo che esplora in ampiezza un albero, come vedremo.
+La conoscenza rappresenta, nella forma base, la rappresentazione di un problema nella forma $<s_i, f_s, t_o, f_c>$. 
+Una volta sviluppata la strategia di ricerca, possiamo riutilizzarla per i più disparati problemi a patto che riusciamo a tradurli in un modello di conoscenza nella forma $<s_i, f_s, t_o, f_c>$ , dove ci si aspetta di trovare una sequenza di passi per raggiungere l'obiettivo.
+
+
 ## Strategie Blind
 Le strategie blind principali sono le seguenti:
 - **[[Ricerca in ampiezza]]**
-- **Ricerca a costo uniforme**
-- **Ricerca in profondità** *con o senza Backtracking*
-- **Iterative Deepening**
+- **[[Ricerca a costo uniforme]]**
+- **[[Ricerca in profondità]]** *con o senza Backtracking*
+- **[[Iterative Deepening]]**
 - **Ricerca bidirezionale**
+
 
 

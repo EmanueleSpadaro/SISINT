@@ -13,6 +13,18 @@
             "state": {
               "type": "markdown",
               "state": {
+                "file": "Iterative Deepening.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "9cfec670666581ab",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
                 "file": "Ricerca in ampiezza.md",
                 "mode": "source",
                 "source": false
@@ -85,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Ricerca in ampiezza.md",
+                "file": "Iterative Deepening.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Ricerca in ampiezza.md",
+                "file": "Iterative Deepening.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +137,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Ricerca in ampiezza.md"
+                "file": "Iterative Deepening.md"
               }
             }
           }
@@ -148,9 +160,24 @@
   },
   "active": "857991b107d6f4f9",
   "lastOpenFiles": [
-    "imgs/breadth-complexity-table.png",
     "Ricerca in ampiezza.md",
+    "Iterative Deepening.md",
+    "Ricerca in profondità.md",
+    "Mondo Giocattolo.md",
+    "Ricerca a costo uniforme.md",
     "Intelligenza Artificiale.md",
+    "imgs/depth-first-search-no-backtrack.png",
+    "Pasted image 20230601003556.png.md",
+    "imgs/depth-first-search-no-backtrack.png",
+    "Pasted image 20230601003556.png",
+    "draw-io/depth-first-search-no-backtrack.drawio",
+    "draw-io/uniform-cost-search - Copia.drawio",
+    "imgs/uniform-cost-search.png",
+    "draw-io/uniform-cost-search.drawio",
+    "draw-io/00-graph-base - Copia.drawio",
+    "draw-io/00-graph-base.drawio",
+    "Mondo dell'Aspirapolvere.md",
+    "imgs/breadth-complexity-table.png",
     "imgs/breadth-first-search.png",
     "draw-io/breadth-first-search.drawio",
     "draw-io/branch-first-search.drawio",
@@ -158,20 +185,10 @@
     "draw-io/graph-base - Copia.drawio",
     "imgs/graph-edge.png",
     "draw-io/graph-edge.drawio",
-    "draw-io/graph-.drawio",
     "imgs/search-graph.png",
-    "draw-io/search-graph.drawio",
-    "draw-io/graph-base.drawio.crswap",
-    "draw-io/graph-base.drawio",
-    "draw-io",
     "imgs/search-tree.drawio.png",
-    "Mondo dell'Aspirapolvere.md",
     "Intenzionalità.md",
-    "Mondo Giocattolo.md",
     "imgs/vacuum-world.png",
-    "imgs/vacuum-world.png",
-    "imgs/ai-software-design.png",
-    "imgs/mondo-giocattolo.png",
     "Untitled.canvas",
     "Untitled 1.canvas"
   ]
