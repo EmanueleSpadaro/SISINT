@@ -28,12 +28,17 @@ Si è dimostrato che quando A* lavora su alberi di ricerca e:
 1. L'Euristica $h$ è [[Euristica Ammissibile|Ammissibile]]
 2. Per ogni passo $a$, $f_c(a)>0$
 allora valgono le seguenti valutazioni per *Completezza* e *Ottimalità*.
+
 - **Completezza**: **SI**
 - **Ottimalità**: **SI**
 - **Complessità temporale**: $O(b^{d})$ dove
   - $b$: branching factor
   - $d$: profondità minimale del goal
 - **Complessità spaziale**: $O(b^{d})$ perché tutti i nodi della frontiera e tutti i loro antenati vanno mantenuti in memoria
+
+**N.B.** Se tutte le azioni hanno **costo uniforme pari a 1**, [[A-star]] diventa una [[Ricerca in ampiezza]].
+
+**A-star** è detto **OTTIMAMENTE EFFICIENTE**: è stato dimostrato che non esiste nessun altro algoritmo ottimo che garantisca di espandere meno nodi di A*.  
 
 ## Dimostrazione Ottimalità con Alberi
 Sapendo che A* è *Completo*, vogliamo dimostrare che A* sia *Ottimale* quando lavora su Alberi di Ricerca.
@@ -52,4 +57,12 @@ dove:
 Una euristica che rispetta la **Disuguaglianza Triangolare** è detta **Euristica Consistente o Monotona**.
 Se una euristica è *Consistente* **i costi $f(n)$ lungo il cammino sono** **non decrescenti**.
 
-![[euristics-set.png]]
+```mermaid
+flowchart TB
+	subgraph Ammissibile
+	subgraph Monotono
+	end
+	end
+```
+
+**N.B.**  $h(n)=0$ per la definizione di [[Euristica Ammissibile|Ammissibilità]] è ammissibile, ma **NON E' INFORMATIVA**: permetterebbe di valutare solo il costo del percorso fatto per raggiungere il nodo $n$.

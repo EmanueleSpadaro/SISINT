@@ -84,7 +84,14 @@ L'approccio adatto all'AI software è quello del **paradigma dichiarativo** e ru
 Lo stesso programma quindi è utilizzabile in molteplici situazioni differenti e la percezione è integrata con la base di conoscenze di quest'ultimo.
 **E' potente perché l'algoritmo può essere lo stesso, ma la conoscenza può essere totalmente diverso anche in termini di dominio**. (Per esempio, l'algoritmo del [[Mondo Giocattolo]] potrebbe essere tranquillamente utilizzabile anche per decidere la strada per andare da Torino a Catania).
 
-![[ai-software-design.png]]
+```mermaid
+graph TD
+	1[Modulo deliberativo]
+	2[Knowledge base]
+	3[Perception]
+	1 --> |Queries| 2
+	1 --> |Uses| 3
+```
    
 Un agente percepisce la situazione iniziale e resta in attesa, non facendo nulla, di ricevere un **goal** (obiettivo) da raggiungere.
 Una volta ricevuto il goal, costruisce i passi con i quali andare dalla situazione iniziale a quella desiderata.
@@ -146,7 +153,21 @@ Un **nodo** ha più informazioni rispetto ad uno stato:
 
 ![[search-tree.drawio.png]]
 
-![[search-graph.png]]
+```mermaid
+---
+title: Grafo di ricerca
+---
+graph TD
+	1((i))
+	2((s' a' c'))
+	3((s'' a'' c''))
+	4((Stato goal))
+
+	1 --> |c'| 2
+	1 --> |c''| 3
+	2 --> |c'''| 4
+	3 --> |c''''| 4
+```
 
 Il grafo di ricerca è una struttura più generica, e può dare vita a più sequenze di soluzione per raggiungere un determinato nodo target.
 **Soluzione ottima**: sequenza di azioni che portano dallo stato iniziale ad uno stato goal con il costo minimo.
@@ -159,7 +180,16 @@ dove:
 - $n_i$ : nodo generico
 - $e_{ij}$ : arco 
 
-![[graph-edge.png]]
+```mermaid
+flowchart TB
+	subgraph one["n_{i}"]
+	id1((Nodo i))
+	end
+	subgraph two["n_{j}"]
+	id2((Nodo j))
+	end
+	one --> |"e_{ij}"| two
+```
 Ogni arco $e_{ij}$ ha associato un costo $c_{ij}$.
 Inoltre, gli archi sono diretti e quindi l'esistenza di un arco da A verso B non implica che ve ne sia uno da B verso A.
 $$ \exists e_{l_m} \in \{e_{ij}\} \neg\Rightarrow \exists e_{ml} \in e_{ij}$$
@@ -219,7 +249,18 @@ Sono delle strategie di ricerca che ambiscono ad ottenere **soluzioni ottime in 
   - $t$ è un nodo target
   - $v$ è una stima del costo per andare da $n\rightarrow t$
 
-![[heuristics-intro.png]]
+```mermaid
+graph TB
+1((Stato iniziale))
+2((n))
+3((t_1))
+4((t_2))
+5((t_k))
+1 --> 2
+2 --> |"h(n, t_1)"| 3
+2 --> |"h(n, t_2)"| 4
+2 --> |"h(n, t_k)"| 5
+```
 $$h(n)=min_i\text{ } h(n,t_i)$$
 Sono detti **nodi preferiti di $n$** quei nodi target $t$ per cui il costo stimato è minimo.
 Grazie all'*Euristica* avremo quindi una guida per raggiungere in modo efficiente delle soluzioni ottime.
@@ -230,4 +271,54 @@ Ne esistono di diverse, noi tratteremo:
 - [[Ricerca Greedy]]
 - [[A-star]]
 - RBFS
+### Funzioni Euristiche
+Le funzioni euristiche possono essere:
+- [[Euristica Ammissibile|Ammissibili]]: ottimistiche rispetto al costo reale
+- **Informative**: per esempio $h(n)=0$ per la definizione di [[Euristica Ammissibile|Ammissibilità]] è ammissibile, ma **NON E' INFORMATIVA**: permetterebbe di valutare solo il costo del percorso fatto per raggiungere il nodo $n$.
+- **Consistenti o Monotone**: rispettano la Disuguaglianza Triangolare $\forall n, n', \text{  }h(n)\leq c(n,n',a) + h(n')$
+
+
+Le funzioni euristiche possono essere più adatte rispetto ad altre in termini di efficienza.
+
+Un esempio potrebbe essere quello del Gioco dell'8.
+Proponiamo due euristiche, entrambe [[Euristica Ammissibile|ammissibili]] per risolvere il problema:
+- $h_1$: numero di tessere fuori posto rispetto al goal
+- $h_2$: distanza di Manhattan, e cioè il numero di spostamenti che la tessera deve fare verticalmente e orizzontalmente per raggiungere la sua posizione desiderata all'interno del goal
+
+e le compariamo in termini di *nodi generati* con l'[[Iterative Deepening]].
+
+| d   | id      | $A* \ h_1$ | $A* \ h_2$ |
+| --- | ------- | ---------- | ---------- |
+| 2   | 10      | 6          | 6          |
+| 4   | 112     | 13         | 12         |
+| 6   | 680     | 20         | 18         |
+| 8   | ...     | ...        | ...        |
+| 10  | ...     | ...        | ...        |
+| 12  | 3644025 | 227        | 73         |
+| ... | ...     | ...        | ...        |
+| 22  | ...     | 18094      | 1219       |
+| 24  | ...     | 39135      | 1641       |
+
+E' detta **funzione euristica dominante rispetto ad un'altra** quella *funzione euristica* $h_2$ rispetto ad $h_1$ per cui vale
+$$\forall n\ h_1(n)\leq h_2(n)$$
+Una funzione dominante è anche detta **più informativa** rispetto ad altre.
+
+Se non si vuole dimostrare in maniera così estensiva, andando a comparare i dati in maniera tabellare tra le funzioni euristiche, è possibile andare a reperire semplicemente la funzione dominante in un insieme di funzioni euristiche in questo modo.
+
+Siano $h_1, h_2,...,h_k$ euristiche ammissibili per un certo problema se:
+$$\forall n\ h(n)=\text{MAX}\{h_1(n), h_2(n), ..., h_k(n)\}$$
+$h(n)$ è l'**euristica dominante** su $h_1, h_2,...,h_k$
+
+### Branching Factor effettivo
+Supponiamo di avere eseguito A* generando $N$ nodi, e avendo  
+Supponiamo di avere eseguito A* su un certo problema, siano:
+- $N$: numero di nodi generati a partire da un nodo iniziale
+- $d$: profondità della soluzione trovata
+
+$b$* è  il **branching factor di un albero uniforme di profondità d che contiene N+1 nodi**.
+
+E' utilizzato per valutare la bontà di una *funzione euristica*, è un numero reale che più si avvicina a 1, più indica che l'*euristica* è indicata per risolvere il problema.
+Avere un branching factor pari a 1 indicherebbe che abbiamo un albero che costituisce un'unica sequenza di passi da effettuare.
+
+
 

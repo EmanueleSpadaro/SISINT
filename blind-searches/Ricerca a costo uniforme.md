@@ -2,7 +2,22 @@ Variante della [[Ricerca in ampiezza]], è una [[Intelligenza Artificiale#Strate
 Questa strategia **mira ad ottenere una soluzione ottima**, e procede ordinando l'accesso alla frontiera sulla base del costo minimo.
 **Ha il problema di entrare in un loop infinito se c'è un loop di costo nullo**.
 
-![[uniform-cost-search.png]]
+```mermaid
+graph TD
+	1((Stato iniziale))
+	2((A))
+	3((B))
+	4((C))
+	5((Goal))
+
+	1 --> |1| 2
+	1 ==> |5| 3
+	1 --> |15| 4
+
+	2 --> |10| 5
+	3 ==> |5| 5
+	4 --> |5| 5
+```
 
 ### Spiegazione esempio
 Si consideri $s(c)$ all'interno della frontiera come $s\text{ Stato}, c\text{ Costo}$.      
