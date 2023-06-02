@@ -210,7 +210,24 @@ Le strategie blind principali sono le seguenti:
 - **[[Ricerca a costo uniforme]]**
 - **[[Ricerca in profondità]]** *con o senza Backtracking*
 - **[[Iterative Deepening]]**
-- **Ricerca bidirezionale**
+- **[[Ricerca bidirezionale]]**
+## Strategie di Ricerca Informate
+Sono delle strategie di ricerca che ambiscono ad ottenere **soluzioni ottime in modo efficiente**, e hanno a disposizione la seguente conoscenza:
+- **Istanza del problema**: $<s_i, f_s, t_o, f_c>$
+- **Euristica**: funzione $h(n, t) = v$, da *heuristics*, dalla quale otteniamo $h(n) = v$, dove
+  -  $n$ è un nodo qualsiasi dell'albero/grafo di ricerca
+  - $t$ è un nodo target
+  - $v$ è una stima del costo per andare da $n\rightarrow t$
 
+![[heuristics-intro.png]]
+$$h(n)=min_i\text{ } h(n,t_i)$$
+Sono detti **nodi preferiti di $n$** quei nodi target $t$ per cui il costo stimato è minimo.
+Grazie all'*Euristica* avremo quindi una guida per raggiungere in modo efficiente delle soluzioni ottime.
 
+E' detta strategia di ricerca informata una strategia di ricerca che **applica ai nodi della frontiera una funzione di valutazione** $f(n)$. *(La quale può utilizzare internamente anche l'euristica)*
+
+Ne esistono di diverse, noi tratteremo:
+- [[Ricerca Greedy]]
+- [[A-star]]
+- RBFS
 
