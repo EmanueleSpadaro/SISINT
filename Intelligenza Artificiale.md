@@ -270,7 +270,7 @@ E' detta strategia di ricerca informata una strategia di ricerca che **applica a
 Ne esistono di diverse, noi tratteremo:
 - [[Ricerca Greedy]]
 - [[A-star]]
-- RBFS
+- [[RBFS]]
 ### Funzioni Euristiche
 Le funzioni euristiche possono essere:
 - [[Euristica Ammissibile|Ammissibili]]: ottimistiche rispetto al costo reale
@@ -309,6 +309,8 @@ Siano $h_1, h_2,...,h_k$ euristiche ammissibili per un certo problema se:
 $$\forall n\ h(n)=\text{MAX}\{h_1(n), h_2(n), ..., h_k(n)\}$$
 $h(n)$ è l'**euristica dominante** su $h_1, h_2,...,h_k$
 
+La ricerca di un'euristica valida per un problema può essere ardua, è possibile quindi trovare un'euristica per una **versione rilassata di un problema**: una versione dove i vincoli del problema sono attenuati o rimossi (E.G.: nel gioco dell'8 i movimenti delle tessere sono limitati dallo spazio libero).
+Una soluzione ottima di un problema rilassato è ammissibile anche per il problema con i vincoli. 
 ### Branching Factor effettivo
 Supponiamo di avere eseguito A* generando $N$ nodi, e avendo  
 Supponiamo di avere eseguito A* su un certo problema, siano:
@@ -320,5 +322,42 @@ $b$* è  il **branching factor di un albero uniforme di profondità d che contie
 E' utilizzato per valutare la bontà di una *funzione euristica*, è un numero reale che più si avvicina a 1, più indica che l'*euristica* è indicata per risolvere il problema.
 Avere un branching factor pari a 1 indicherebbe che abbiamo un albero che costituisce un'unica sequenza di passi da effettuare.
 
+# Ricerca con Avversario
+La Ricerca con Avversario ci sposta in un **contesto multiagente**: quest'ultimo potrebbe essere *collaborativo*, ma noi studiamo il caso in cui vi sono **2 agenti con obiettivi conflittuali**.
+Questi problemi sono talvolta chiamati **giochi**: noi affronteremo il caso di **giochi a turni**.
+
+I giochi a turni sono i più semplici da affrontare in quanto non si deve affrontare un problema dove lo stato dell'ambiente può mutare in tempo reale: è il caso del gioco del Tris.
+
+Le Strategia di Ricerca con Avversario introducono una **Funzione di Utilità**:
+**valuta gli stati terminali** di ogni azione mappandolo con un valore talvolta intero che, se positivo rappresenta un "premio", se negativo una situazione di perdita.
+
+Cosa si intende per "stati terminali"?
+Il contesto multiagente impone che, per esempio nel tris, dopo la nostra azione, lo stato successivo non sarà più determinato da noi, ma bensì dall'agente avversario: sarà quindi necessario per le Strategia di Ricerca con Avversario andare a valutare tutti i possibili stati che potrebbe causare l'avversario dopo una scelta.
+
+## Giochi
+I giochi sono quindi **contesti multiagente** dove gli agenti hanno goal conflittuali.
+Sono classificabili secondo le seguenti proprietà:
+- **A informazione perfetta / imperfetta**: caratteristica per la quale gli agenti sono in possesso di tutte le informazioni utili a poter effettuare una decisione all'interno dell'ambiente
+- **Effetti della scelta deterministici / stocastici**: caratteristica per la quale la scelta intrapresa da un agente porta ad un solo stato oppure può portare a diversi stati
+
+|  | Informazione Perfetta | Informazione Imperfetta |
+|---|---|---|
+| **Deterministico** | Scacchi | Master Mind |
+| **Stocastico** | Monopoli | Poker |
+
+
+### Teoria delle Decisione nell'ambito dei Giochi a Somma Zero
+**Giochi a Somma Zero**: sono giochi dove il guadagno di un agente è compensato dalla perdita di altri.
+E.G.: se c'è una torta e due agenti, se uno dei due mangia metà torta, questo avrà guadagnato quella metà, e il suo guadagno è compensato dalla perdita di metà torta dell'avversario.
+
+La teoria della decisione studia **gli approcci alla decisione**:
+- **Appoccio Maximax**: è un approccio **ottimistico**, sceglie sempre il **massimo guadagno** per scelta possibile
+- **Approccio Minimax**: è un approccio **pessimistico**, sceglie sempre la **minima perdita** per scelta possibile
+- **Minimax Regret**: è un approccio di **pentimento minimo**, calcola il **Best Regret**:
+  $$\text{Best Regret}= \text{Best Payoff} - \text{Real Payoff}$$
+  e computa una **tabella dei pentimenti**.
+  Una volta computata, sceglie il **pentimento massimo minimo**.
+  Massimo rispetto ai pentimenti possibili dopo le azioni degli altri agenti data un'azione, minimo rispetto agli altri pentimenti massimi derivanti dalle altre azioni.
+  
 
 
