@@ -359,5 +359,113 @@ La teoria della decisione studia **gli approcci alla decisione**:
   Una volta computata, sceglie il **pentimento massimo minimo**.
   Massimo rispetto ai pentimenti possibili dopo le azioni degli altri agenti data un'azione, minimo rispetto agli altri pentimenti massimi derivanti dalle altre azioni.
   
+Durante la trattazione della teoria delle decisioni nell'ambito dei Giochi a Somma Zero, ci utilizzeremo i seguenti termini per indicare con:
+- **MAX**: il giocatore che vogliamo aiutare a scegliere la mossa
+- **MIN**: il giocatore contro il quale gioca MAX, lo consideriamo un **avversario perfetto** durante la valutazione delle decisioni, e cioè per ogni suo nodo scegliamo come suo successore quello che mette *MAX* nella situazione peggiore
+- **Nodo terminale**: nodo in cui è possibile calcolare una **funzione di utilità per MAX**.
 
+**Funzione di utilità**: è una funzione applicabile solo ed esclusivamente ai nodi terminali, e deve esplicitare valori che rendano l'idea della condizione di vittoria rispetto a quella di sconfitta.
+Un esempio può essere il seguente:
 
+$$f_\text{utilità}(n_\text{terminale})= \begin{cases} 1 & \text{se rappresenta una vittoria di MAX } \\ 0 & \text{se rappresenta un pareggio} \\ -1 & \text{se rappresenta una sconfitta per MAX} \end{cases} $$
+Gli algoritmi di Ricerca con Avversario sono strani perché **non ci danno una soluzione**, ma bensì **solo la mossa successiva da fare**.
+Perché? Perché non possono sapere la mossa che farà l'avversario, non è detto che faccia la mossa che peggiora più di tutte la condizione di vittoria di MAX.
+
+Se per i *nodi terminali* utilizziamo la *funzione di utilità* per capire quale siano i nodi terminali da prediligere, d'altro canto ci è necessario poter valutare i nodi intermedi di MAX e MIN.
+Viene introdotta infatti una **funzione di valutazione dei nodi intermedi**:
+$$\text{valore-minimax}(n)= \begin{cases} f_\text{utilità}(n) & \text{se } n \text{ è terminale} \\ \text{MAX}_{S\in\text{SUCC}(n)}(\text{valore-minimax}(S))  & \text{se è un nodo di MAX} \\ \text{MIN}_{S\in\text{SUCC}(n)}(\text{valore-minimax}(S))  & \text{se è un nodo di MIN} \end{cases} $$
+E' facile notare che la considerazione di *MIN* come *avversario perfetto* è ben esplicitata in quanto, nel caso di un nodo di *MIN*, viene considerato come valore il minimo tra i valori della *funzione di utilità* per *MAX*.
+
+Grazie alla funzione di utilità è possibile introdurre l'**Algoritmo Minimax**.
+
+## Algoritmo Minimax
+L'algoritmo Minimax è un algoritmo di ricerca con avversario che visita l'albero delle possibilità in profondità, da qui deriva l'estrema efficienza in termini di spazio.
+E' facilmente implementabile grazie delle seguenti funzioni
+```
+function MINIMAX-DECISION(state) returns ACTION {
+	v <- MAX_VALUE(state)
+	return ACTION IN SUCCESSORS(state) WITH value v
+}
+
+function MAX_VALUE(state) returns UTILITY_VALUE {
+	if(isTerminalState(state)) => return UTILITY_VALUE(state)
+	v <- -∞
+	for(a,s) IN SUCCESSORS(state)
+		v <- MAX(v, MIN_VALUE(state))
+	return v
+}
+
+function MIN_VALUE(state) returns UTILITY_VALUE {
+	if(isTerminalState(state)) => return UTILITY_VALUE(state)
+	v <- +∞
+	for(a,s) IN SUCCESSORS(state)
+		v <- MIN(v, MAX_VALUE(state))
+	return v
+}
+//mappata in modo adatto al gioco di riferimento
+function UTILITY_VALUE(state)
+```
+
+### Valutazione delle complessità di Minimax
+
+- **Complessità temporale**: $O(b^m)$, perché **costruisce per intero l'albero** dove
+  - $b$: branching factor *medio*
+  - $m$: profondità massima dell'albero
+- **Complessità spaziale**: 
+  - $O(b*m)$ se *senza backtracking*
+  - $O(m)$, se *con backtracking*
+
+La complessità temporale ci impone di andare a cercare un'ottimizzazione dell'algoritmo.
+
+## Algoritmo Minimax con Potatura Alfa-Beta
+Osserviamo che durante la visita dell'albero **non vogliamo osservare tutti i percorsi di gioco**, ma bensì solo quelli **migliori nel caso sia una scelta di *MAX***, e quelli **peggiori nel caso sia una scelta di *MIN***.
+Per raggiungere tale comportamento viene introdotto un **intervallo alfa-beta**:
+$$\alpha|--------\text{ }|\beta$$
+dove:
+- $\alpha$: **minimo guadagno di *MAX***, detto anche **massimo lower bound**, è il valore che *MAX* ha tutto l'interesse di aumentare
+- $\beta$: **massimo guadagno di *MIN***, detto anche **minimo upper bound**, è il valore che *MIN* ha tutto l'interesse di diminuire
+
+Le firme dell' [[#Algoritmo Minimax]] diventano quindi le seguenti:
+```
+function ALPHA-BETA-DECISION(state, alpha, beta) returns ACTION {
+	v <- MAX_VALUE(state)
+	return ACTION IN SUCCESSORS(state) WITH value v
+}
+
+function MAX_VALUE(state, alpha, beta) returns UTILITY_VALUE {
+	if(isTerminalState(state)) => return UTILITY_VALUE(state)
+	v <- -∞
+	for(a,s) IN SUCCESSORS(state)
+		v <- MAX(v, MIN_VALUE(state, alpha, beta))
+		if(v >= beta) => return v
+		alpha = MAX(alpha, v)
+	return v
+}
+
+function MIN_VALUE(state, alpha, beta) returns UTILITY_VALUE {
+	if(isTerminalState(state)) => return UTILITY_VALUE(state)
+	v <- +∞
+	for(a,s) IN SUCCESSORS(state)
+		v <- MIN(v, MAX_VALUE(state, alpha, beta))
+		if(v <= alpha) => return v
+		beta = MIN(beta, v)
+	return v
+}
+//mappata in modo adatto al gioco di riferimento
+function UTILITY_VALUE(state)
+```
+E' bene comprendere che quindi si aggiungo 2 ulteriori funzioni ai cicli di scorrimento dei successori:
+- **Controllo del range**: se $v$ risulta rispettivamente *maggiore o uguale* oppure *minore o uguale* del limite opposto, allora abbiamo trovato una ramificazione che **non vale la pena esplorare**
+- **Aggiustamento del range**: se $v$ risulta rispettivamente *maggiore* oppure *minore* rispetto al limite analogo, lo aggiorniamo
+
+### Valutazione delle complessità di Minimax con Potatura Alfa-Beta
+- **Complessità temporale**: 
+  - $O(b^{3/4m})$ nel **caso peggiore**
+  - $O(b^{m/2})$ nel **caso medio**, grazie alle *Killer Moves*
+- **Complessità spaziale**: 
+  - $O(b*m)$ se *senza backtracking*
+  - $O(m)$, se *con backtracking*
+
+Le *Killer Moves* sono mosse precedentemente identificate come forti e che hanno portato a una potatura efficace durante la ricerca in alberi di gioco.
+
+**Nonostante il miglioramento della complessità spaziale**,  *soprattutto nel caso medio*, anche questo algoritmo **non è sufficientemente veloce per i** **Giochi in Tempo Reale**.
