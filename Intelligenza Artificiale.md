@@ -470,133 +470,144 @@ Le *Killer Moves* sono mosse precedentemente identificate come forti e che hanno
 
 **Nonostante il miglioramento della complessità spaziale**,  *soprattutto nel caso medio*, anche questo algoritmo **non è sufficientemente veloce per i** **Giochi in Tempo Reale**.
 
-
 ## Giochi in Tempo Reale
-I giochi in tempo reale sono dei giochi che impongono un limite di tempo per eseguire la mossa successiva, e gli algoritmi fino ad ora affrontati sono troppo lenti per farlo quando il nodo terminale è situato a grande profondità.
-Introduciamo quindi una **funzione di valutazione per nodi intermedi** che entra in gioco **allo scadere del limite di tempo**, andando ad evitare di dover arrivare fino in fondo.
+I Giochi in Tempo Reale sono dei giochi che necessitano di rispondere con un'azione con un vincolo di tempo.
+Un modo per poterli affrontare con le strutture che abbiamo visto per quanto riguarda la [[#Ricerca con Avversario]] è quello di andare ad implementare un limite di tempo oltre il quale la Strategia di Ricerca non potrà più continuare ad esplorare l'albero di gioco.
+Questo introduce il problema di dover **valutare l'utilità dei nodi intermedi**, i quali, non essendo *nodi terminali*, non possono essere utilizzati con la *funzione di utilità* che abbiamo specificato.
 
-Esistono diversi approcci per affrontare i giochi in tempo reale:
-1. **Strategia 1 - Tecniche di Apprendimento Automatico per la Sintetizzare la Funzione di Utilità**: consiste nell'etichettare tutti gli stati possibili di gioco, e salvarne l'etichettatura in una base di dati, con una **funzione costruita per approssimare l'obiettivo.**
-2. **Strategia 2 - Identificazione delle caratteristiche rilevanti**: questo approccio richiede il coinvolgimento di un esperto del settore per andare a
-   - **Identificare le caratteristiche misurabili rilevanti degli stati**, $f_i$
-   - **Attribuire un peso alle caratteristiche misurabili**, $w_i$
-   - **Formulare la combinazione lineare:** $$\text{EVAL}(S)=\sum_{i=1}^{n} (f_i \cdot w_i)$$
-dove $n$ è il numero delle caratteristiche rilevate.
+### Strategia 1 - Tecniche di Apprendimento Automatico per Sintetizzare la Funzione di Utilità
+Questa strategia consiste nell'utilizzare una base di dati relativi agli Stati di Gioco, i quali verranno passati ad una **funzione costruita di approssimazione dell'obiettivo** che risponderà con l'**esito più probabile**.
+Etichettare singolarmente ogni possibile Stato di Gioco risulta essere estremamente oneroso e pesante, e non sempre è fattibile farlo: potrebbe risultare complicato dato uno stato $S$ andare a determinare, per esempio, se questo porti con più probabilità alla vittoria, alla sconfitta o un pareggio.
+### Strategia 2 - Valutazione delle caratteristiche rilevanti
+Questa strategia **cerca di risolvere la difficoltà di etichettare tutti gli stati dei casi d'interesse reali**.
+Solitamente ci si riferisce ad un esperto del settore che vogliamo trattare, e si passa poi ad:
+- **Identificare le** **caratteristiche misurabili e rilevanti degli stati**, $f_i$
+- **Attribuire un peso a ciascuna caratteristica**, $w_i$
+- **Calcolare la combinazione lineare sullo stato con**
+  $$\text{EVAL}(S)=\sum_{i=1}^{n} w_i \cdot f_i
+$$
+dove $n$ è il numero delle caratteristiche misurabili rilevate.
 
-Implementare queste strategie come adattamento per i giochi in tempo reale comporta la modifica del codice dell'algoritmo Minimax, che non dovrà più controllare se il nodo sia terminale, ma dovrà effettuare un $\text{TEST-TAGLIO}(\text{stato}, ...)$  sulla base della profondità, tempo passato, ...
+### Problema dell'Orizzonte e Quiescenza
+L'introduzione di una funzione di valutazione dell'utilità di nodi intermedi che risponde sulla base delle probabilità comporta il Problema dell'Orizzonte.
+Per comprenderlo, è necessario introdurre il concetto di quiescenza:
 
-**Entrambe le funzioni di valutazione** rispondono con il valore della funzione di utilità più probabile, si tratta di una **misura probabilistica**: l'algoritmo **costruisce l'albero finché ha tempo**, e poi restituisce l'approssimazione da adottare.
+Uno stato $S$ è detto:
+- **Stato Quiescente**: se è uno stato tranquillo, e cioè che se ha come probabilità maggiore quella di un esito $x$, questa non verrà stravolta nelle primissime mosse successive
+- **Stato NON-Quiescente**: è uno stato instabile, potrebbe totalmente stravolgere le probabilità nelle mosse successive
 
-L'aspetto probabilistico è problematico perché introduce al **Problema dell'Orizzonte**.
-Un nodo è detto:
-- **Quiescente**: quando, se promettente o negativo, scendere al sottoalbero non comporta uno stravolgimento della situazione
-- **Non Quiescente**: quando, se promettente o negativo, scendere al sottoalbero con le immediate mosse successive comporta uno stravolgimento della situazione
+**La *Quiescenza* quindi può portare ad intraprendere percorsi subottimali o del tutto inutili per gli scopi dell'agente**.
 
-Il **Problema dell'Orizzonte** consiste nel fatto che l'algori
+Il **Problema dell'Orizzonte** deriva dal fatto che **il limite di tempo potrebbe portare a valutare uno stato non quiescente**, e come diretta conseguenza **l'agente potrebbe ignorare completamente alcune possibili conseguenze sul lungo termine**.
 
+Una soluzione potrebbe essere quella di tenere in conto della quiescenza all'interno della funzione di valutazione, andando a prediligere quindi gli stati quiescenti rispetto a quelli che non sono tali.
 
 ### Tabelle di Trasposizione
-Le tabelle di trasposizione tengono traccia delle sequenze di mosse che portano da uno stato $S$ ad $S'$ per efficientare la ricerca nello spazio degli stati, evitando di rivalutare un percorso.
-*E.G. Dati* $S \rightarrow (ABC) \rightarrow S'$ e $S \rightarrow (BCA) \rightarrow S'$, $ABC$ e $BCA$ *sono dette trasposizioni*.
+Una **trasposizione** è una **sequenza di mosse** che portano da uno stato $S$ ad uno stato $S'$.
 
+Le tabelle di trasposizione solo delle tabelle che registrano le **trasposizioni che portano da uno stato $S$ ad $S'$**.
+Data una sequenza di mosse $S \rightarrow (A,B,C) \rightarrow S'$ e $S \rightarrow (B,C,A) \rightarrow S'$, le tabelle di trasposizione permettono di registrare che $(A,B,C)$ e $(B,C,A)$, seppur ordinamenti differenti, portano allo stesso stato finale.
+
+Sono estremamente utili per andare a rendere più efficienti gli algoritmi di ricerca, permettendo loro di non andare a valutare percorsi differenti che portano comunque allo stesso nodo.
 
 # CSP - Problemi di Soddisfacimento di Vincoli
-I CSP, *Constraint Satisfaction Problems* sono dei problemi di ricerca nello spazio degli stati composti dai seguenti elementi:
-1. **Insieme di variabili**
-2. **Insieme di vincoli**
-3. **Dominio delle variabili**
+I CSP (Constraint Satisfaction Problems) sono dei **problemi di ricerca in uno spazio degli stati**.
 
-E' possibile riformulare la composizione dei CSP dicendo che è formato da 2 elementi tra i quali un **Insieme di variabili con ognuna il proprio dominio**.
+Un CSP è composto da:
+1. **Insieme di Variabili**
+2. **Insieme di Vincoli**
+3. **Domini delle variabili**
 
-I CSP consistono nel trovare un **assegnamento $\{x_1=v_1, x_2=v_2, ..., x_n=v_n\}$ di tutte le variabili che soddisfa i vincoli**.
-Un assegnamento è detto:
-- **Assegnamento vuoto**: $\{\ \}$, se non ha assegnato alcun valore ad alcuna variabile
-- **Assegnamento Completo:** $\{x_1=v_1, x_2, ..., x_n=v_n\}$, se ha assegnato un valore a tutte le variabili
-- **Assegnamento Consistente**: $\{x_1 = v_1, x_2=v_2\}$, se ha assegnato dei valori alle variabili che rispettano i vincoli
-- **Soluzione**:  $\{x_1=v_1, x_2, ..., x_n=v_n\}$, se ha assegnato a tutte le variabile un valore che rispetta i vincoli, e cioè **se è Completo e Consistente**.
+o alternativamente da:
+ 1. **Insieme di Variabili con il loro dominio**
+ 2. **Insieme di Vincoli**
 
-N.B. $Completo \nRightarrow Consistente \land Consistente \nRightarrow Completo$ !
+I CSP sono problemi che consistono nel trovare un **assegnamento** di tutte le variabili che soddisfa i vincoli.
 
-I CSP sono problemi nella quale siamo coinvolti quotidianamente:
-- *Gestione degli Orari*: dai semplici *Orari Scolastici* alla gestione degli *Equipaggi delle Linee Aeree*...
-- *Logistica*: gestione dei vincoli di tempo per la consegna e  i vincoli fisici imposti dal voler sfruttare al massimo lo spazio nei mezzi di trasporti
-- *Gestione Produttiva*: per efficientare l'utilizzo delle risorse di produzione come la *Stoffa in Sartoria* oppure la *[produzione di segnali stradali](https://youtu.be/_Gu1_S1SIeg?t=686)*.
+Un **assegnamento** è un insieme di coppie che consiste in un'associazione di valori alle variabili del problema $$\{x_1=v_1, x_2=v_2, ..., x_n=v_n\}$$
+con valori ovviamente compatibili con il dominio di quest'ultime.
 
-Un esempio di CSP introduttivo è il [[Problema dell'Australia]].
+Dato un insieme di variabili $\{x_1, x_2, x_3\}$, **un assegnamento è detto** :
+- **Assegnamento Vuoto**: $\{\ \}$, se non assegna alcun valore ad alcuna variabile
+- **Assegnamento Completo**: $\{x_1=v_1,x_2=v_2,x_3=v_3\}$, se assegna un valore ad ogni variabile
+- **Assegnamento Consistente**: $\{x_1=v_i, x_3=v_k\}$, se assegna dei valori che soddisfano tutti i vincoli
+- **Soluzione**: se è *Completo* e *Consistente*
+ 
+**N.B.** $Consistente \nRightarrow Completo \land Completo \nRightarrow Consistente$
 
-#### CSP come Problema di Ricerca in uno Spazio di Stati 
-Potrebbe risultare controintuitivo considerare i CSP come dei problemi di ricerca nello spazio di stati, ma è in realtà se riprendiamo la forma di [[#Istanza di un problema]]
-$$ <s_i, f_s, t_o, f_c> $$
-dove
-- $s_i$: $\{\ \}$, è sempre l'*Assegnamento Vuoto*
-- $f_s$: assegnamento di un valore ad una variabile
-- $t_o$: controllo che l'assegnamento sia *Completo* e *Consistente*
-- $f_c$: è inutilizzata in questo caso, l'assegnamento di un valore ad una variabile ha costo costante, solitamente si dice $f_c=1$ 
+##### Commutatività dei CSP
+Per gli assegnamenti vale la proprietà della **Commutatività**: l'ordine degli assegnamenti dei valori alle variabili porta ad avere lo stesso assegnamento. 
+$$\{x_1=v_1,x_2=v_2\} = \{x_2=v_2,x_1=v_1\}$$
 
-Notiamo sin da subito che i CSP hanno un **forma estremamente standardizzata** e che
- - La **profondità massima $m$** è sempre il **numero di variabili**
- - L'**ordinamento degli assegnamenti è ininfluente**
+I CSP sono problemi onnipresenti nella vita di tutti i giorni, e vedono casi d'uso in:
+- Progettazione di Turni di Lavoro, *per esempio nelle Linee Aeree o anche i semplici orari scolastici*
+- Logistica, *per i vincoli di tempo di consegna e per massimizzare lo spazio nei mezzi di trasporto*
+- Produzione, *per minimizzare il consumo di materie prime nel taglio di stoffa o [pannelli di acciaio nelle segnaletiche stradali](https://youtu.be/_Gu1_S1SIeg?t=685)*
 
-L'ininfluenza degli assegnamenti è una diretta conseguenza della **proprietà commutativa dei CSP**.
-Dati $A_i = \{x_1=v_1, x_2=v_2\}, A_j=\{x_2=v_2,x_1=v_1\}$, allora $A_i$ e $A_j$ sono lo stesso assegnamento. 
+## CSP come Problema di Ricerca in uno Spazio di Stati
+Sebbene possa sembrare controintuitivo andare a considerare un CSP come un Problema di Ricerca in uno Spazio di Stati, è in realtà molto semplice considerare un CSP come un'istanza di un problema $P$
+$$ P\ =\ <s_i, f_s, t_o, f_c> $$
+dove:
+- $s_i$: è sempre l'*Assegnamento Vuoto*
+- $f_s$: assegnamento di un valore ad una variabile senza valore
+- $t_o$: test di *Completezza* e *Consistenza*
+- $f_c$: inutilizzata, gli assegnamenti di valore hanno costo costante, solitamente si dice $f_c=1$
 
-#### Domini delle Variabili di un CSP
-E' opportuno, durante la formulazione di un CSP, andare a verificare il dominio delle sue variabili, che può essere:
-- **Dominio Booleano**: solo 2 valori, $True\ False$ oppure $0\ 1$
-- **Valori Discreti con Dominio Finito**: come nelle *Enumerazioni di Costanti*
-- **Valori Discreti con Dominio Infinito**: per esempio $\forall x \in \mathbb{Z}$ 
-- **Valori Continui**: per esempio $\forall x \in \mathbb{R}$
+Si può notare sin da subito come i CSP abbiamo una **forma fortemente standardizzata**.
 
-Si può notare come ognuno dei dominio sia sottoinsieme dell'altro.
+La **profondità massima $m$** è equivalente alla **cardinalità dell'*Insieme di Variabili***.
+L'**ordine degli assegnamenti** è **ininfluente**.
 
-L'importanza della definizione del dominio delle variabili deriva dal fatto che ogni dominio abbia un proprio linguaggio di specifica.
-Prendendo in esempio i **Valori Discreti con Dominio Infinito**, potrebbe per esempio modellare i valori interi al numero dei giorni e formulare con
-$$ Task_1 + 5 < Task_2$$
-che $Task_2$ debba essere schedulata 5 giorni dopo $Task_1$. 
+Un esempio di problema introduttivo ai CSP visti come Problema di Ricerca in uno Spazio di Stati è il **[[Problema dell'Australia]]**.
+### Domini delle Variabili nei CSP
+Si parte dal caso più semplice dove il dominio delle variabili è quello *Booleano*, fino al dominio di *Valori Continui*.
+- **Dominio Booleano**: due valori, $\text{True False}$ o $0\ 1$
+- **Valori Discreti con Dominio Finito**: *Enumerazioni di Costanti*, $\text{etc...}$
+- **Valori Discreti con Dominio Infinito**: per esempio $\forall x \in \mathbb{Z}$
+- **Valori Continui**: $\forall x \in \mathbb{R}$
 
-#### Vincoli e Criteri di Preferenza
-I vincoli sono classificati sulla base del numero di variabili che coinvolgono:
-- **Unari**: $Età \geq 18$, coinvolgono una sola variabile
-- **Binari**: $WA\neq NT$, coinvolgono due variabili
-- **Con 3 o più variabili**: non li affrontiamo perché è dimostrabile che ogni vincolo di 3 o più variabili possa essere ricondotto ad un sistema di vincoli unari e binari, ma sono molto comuni per esempio nella *Cripto-aritmetica*.
+N.B. A partire dal dominio Booleano a quello dei valori Continui, notiamo che intercorre una relazione a catena per il quale un è sottoinsieme dell'altro.
 
-E' bene distinguere i vincoli dai criteri di preferenza:
-- **Vincolo**: condizione **obbligatoria**, una soluzione deve rispettarla per essere tale
-- **Criterio di preferenza**: condizione **morbida**, può essere utilizzata per effettuare un ranking delle soluzioni, ma **può essere violato**.
+E' bene identificare il dominio del CSP che si sta affrontando perché **ogni dominio ha un linguaggio di specifica differente**!
+*E.G.: nel dominio dei Valori Discreti con Dominio Infinito, potremmo mappare i giorni con i numeri interi e dire che un'attività $\text{Task}_2$ debba essere eseguita quantomeno 5 giorni dopo $\text{Task}_1$ con il seguente vincolo: $\text{Task}_1 + 5 < \text{Task}_2$ .*
 
-I vincoli sono talvolta visualizzabili e gestibili attraverso il [[Grafo dei Vincoli]].
+### Vincoli e Criteri di Preferenza
+I vincoli sono classificati in base al numero di variabili che vengono coinvolte:
+1. **Unari**: $\text{Età}\geq18$
+2. **Binari**: $WA\neq NT$
+3. **Con 3 o più variabili**: *per esempio nella Cripto-Aritmetica* 
 
-### Strategie di Ricerca per CSP
-Durante il corso utilizzeremo il [[Problema delle 8 Regine]] come esempio per comparare le diverse strategie di ricerca per CSP, che sono:
-- [[Generate & Test]], che genera casualmente gli assegnamenti
-- [[Backtracking Search per CSP]], che sfrutta la proprietà di commutatività dei CSP
-- [[Backtracking Search per CSP con Inferenza]]
+Tratteremo all'interno del corso solo vincoli *Unari* e *Binari*, in quanto è possibile dimostrare come vincoli di 3 o più variabili possano essere ricondotti ad una serie di vincoli binari e unari.
 
-#### Euristiche per CSP
-Le Euristiche per CSP sono utili per efficientare la ricerca nello spazio degli stati, e sono usate nel seguente ordine:
-1. **Minimum Remaining Values (Fail First)**: seleziona la variabile con il minor numero di valori rimanenti nel suo dominio. 
-   Questa euristica permette di andare a verificare più velocemente se il percorso che si sta ricercando sia fallimentare. [[Esempio Minimum Remaining Values - Fail First|Esempio]].
-2. **Euristica di Grado**: seleziona la variabile coinvolta in un numero massimo di vincoli con altre variabili non ancora assegnate.
-   Questa euristica punta a ridurre le interazioni tra variabili non ancora assegnate, considerando le variabili con più vincoli come più problematiche. [[Esempio Euristica di Grado per CSP|Esempio]].
-3. **Euristica del Valore Meno Vincolante**: seleziona il valore che viola meno vincoli per la variabile attuale.
-   Questa euristica si pone come obiettivo quello di voler lasciare quanti più valori disponibili alle restanti variabili non assegnate, dopo l'assegnamento del valore scelto. [[Esempio Euristica valore meno vincolante|Esempio]].
+E' bene distinguere i *Vincoli* dai *Criteri di Preferenza*:
+- **Vincoli**: **condizione obbligatoria**, la *Soluzione* deve assolutamente rispettarla
+- **Criteri di Preferenza**: **condizione morbida**, utile per il ranking di soluzioni, ma può essere violato dall'algoritmo di ricerca
+
+## Strategie di Ricerca per CSP
+Tratteremo le differenti Strategie di Ricerca prendendo in esame la loro applicazione sul [[Problema delle 8 Regine]].
+
+Le strategie di Ricerca per CSP sono:
+- **[[Generate & Test]]**
+- **[[Backtracking Search per CSP]]**
+- **[[Backtracking Search per CSP con Inferenza]]**
+
+### Euristiche per CSP
+Le Euristiche per CSP **forniscono degli approcci all'assegnamento** dei valori alle variabili che puntano a renderli più **efficiente**.
+N.B. Non sono le stesse euristiche delle [[#Strategie di Ricerca Informate]].
+
+Le euristiche, in ordine di applicazione, sono:
+- **Minimum Remaining Values (Fail First)**: seleziona la variabile con il minor numero di valori alternativi consistenti con le scelte fatte. [[Esempio Minimum Remaining Values - Fail First|Esempio]].
+- **Euristica di Grado**: seleziona la variabile coinvolta in più vincoli quando vi sono dei pari merito.
+  L'idea risiede nel fatto che la variabile coinvolta in più vincoli sarà sicuramente la più problematica. [[Esempio Euristica di Grado per CSP|Esempio]].
+- **Euristica del Valore meno Vincolante**: sceglie il valore che lascia più liberta alle variabili adiacenti rispetto al [[Grafo dei Vincoli]].
+  L'idea risiede nel fatto che scegliere un valore più vincolante per le altre variabili rischia di tagliare via le soluzioni.
+  Nell'esempio di vuole effettuare un assegnamento di valore alla variabile $Q$ che ha come possibili valori consistenti con i vincoli del CSP $\{R, B\}$. [[Esempio Euristica valore meno vincolante|Esempio]].
 
 ### Modalità di Inferenza
-L'Inferenza è un modo per propagare attraverso i vincoli e le proprietà dei CSP le informazioni attualmente in possesso, andando a ridurre lo spazio di ricerca attraverso delle deduzioni logiche che ne conseguono.
+L'inferenza ha lo scopo di ridurre lo spazio di ricerca in modo consistente usando i vincoli per tagliare assegnamenti non consistenti con l’informazione disponibile.
 
-Le proprietà utilizzate come modalità per fare inferenza sono:
-- **[[Forward Checking]]**, *più un approccio che una proprietà*, relativo ai nodi adiacenti 
-- **[[Node Consistency]]**, relativo ai vincoli unari
-- **[[Arc Consistency]]**, relativo ai vincoli binari
-- **Path Consistency**
-
-
-
-
-
-
-
-
-
-
-
+Esistono diverse modalità di inferenza, noi ne vedremo 4, dalla più semplice alla più complicata in termini di implementazione.
+1. **[[Forward Checking]]** (più un approccio che modalità)
+2. **[[Node Consistency]]**
+3. **[[Arc Consistency]]**
+4. **Path Consistency**
