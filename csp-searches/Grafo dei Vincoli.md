@@ -2,4 +2,4 @@ Un Grafo dei Vincoli è un modo per esplicitare in modo più fruibile per un uma
 E' molto semplice realizzare un Grafo dei Vincoli: ogni nodo è legato con un altro solo se esiste un vincolo che li lega
 
 ### Esempio di Grafo dei Vincoli per il [[Problema dell'Australia]]
-![[constraint-graph.png]]
+![[grafo-dei-vincoli-1.svg]]

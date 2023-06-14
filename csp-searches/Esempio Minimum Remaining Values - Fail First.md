@@ -1,2 +1,2 @@
- Nell'esempio sarebbe scelto $\text{SA}$.
-  ![[Pasted image 20230613162441.png]]
+Nell'esempio sarebbe scelto $\text{SA}$.
+![[minimum-remaining-values-fail-first-1.svg]]
