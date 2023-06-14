@@ -1,4 +1,4 @@
-AC-3 è un **algoritmo non-completo** che sfrutta la proprietà di [[Arc Consistency]] per fare [[Intelligenza Artificiale#Modalità di Inferenza|Inferenza]].
+zAC-3 è un **algoritmo non-completo** che sfrutta la proprietà di [[Arc Consistency]] per fare [[Intelligenza Artificiale#Modalità di Inferenza|Inferenza]].
 
 L'algoritmo AC-3 paga la sua semplicità con la **non-completezza**: esistono dei CSP inconsistenti, e cioè non risolvibili, che AC-3 non riesce a rilevare. Sostanzialmente **non riesce a capire durante il pre-processing che il problema non ha soluzione**.
 ![[Pasted image 20230613182118.png]]
