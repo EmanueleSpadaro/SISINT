@@ -2,7 +2,7 @@ E' una proprietà rispetto al [[Grafo dei Vincoli]] che riguarda due variabili a
 E' utilizzata nell'ambito del [[Pre-processing dei CSP]] nell'algoritmo [[AC-3]].
 
 L'Arc Consistency è una proprietà che valuta i vincoli tra due nodi $X$ e $Y$ in entrambe le direzioni:
-![[Pasted image 20230613174405.png]]
+![[arc-consistency-1.drawio.svg]]
 
 ## Definizione di Arco Consistente
 Un arco $X\rightarrow Y$ è detto ***Arc-Consistent*** se e solo se
@@ -13,7 +13,7 @@ N.B. $D_x$: dominio consistente della variabile x
 
 ### Esempio
 
-![[Pasted image 20230613175015.png]]
+![[arc-consistency-2.drawio.svg]]
 
 - $\text{WA}\rightarrow\text{SA}$ non è consistente. 
   $\forall v \in D_\text{WA}\  \exists v'\in D_\text{SA}$ non è vera perché dato $v = R \Rightarrow \nexists v'\in  D_\text{SA}$.
