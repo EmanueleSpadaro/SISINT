@@ -15,11 +15,11 @@ L'introduzione di tale funzione però introduce diversi problemi:
 Questa strategia è fortemente consigliata con [[Intelligenza Artificiale#Strategie Blind|Strategie Blind]] che non si focalizzano in profondità, ma bensì in ampiezza.
 Il problema di avere una strategia fortemente direzionale è evidente nel caso in cui le ricerche parallele intraprendono percorsi che non avranno praticamente mai intersezione, andando effettivamente a rendere invano il punto di forza di lavorare in parallelo: è come se lavorassero da sole.
 
-![[bidirectional-search-depth.png]]
+![[bidirectional-search-depth.drawio.svg]]
 
 In caso di [[Ricerca in ampiezza]] o simili, invece, la ricerca assume un carattere differente come qui descritto:
 
-![[bidirectional-search-breadth.png]]
+![[bidirectional-search-breadth.drawio.svg]]
 andando a trovare con molta più facilità un'intersezione.
 
 ## Criteri di valutazione della strategia di ricerca

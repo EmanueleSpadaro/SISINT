@@ -1,6 +1,6 @@
 E' una [[Intelligenza Artificiale#Strategie Blind|strategia di ricerca Blind]] che parte dallo stato inziale $s_i$ , poi si espande verso i suoi successori, successivamente verso tutti i discendenti del secondo livello, etc...
 
-![[breadth-first-search.png]]
+![[breadth-first-search.drawio.svg]]
 ## Funzionamento
 Si parte creando il nodo dello stato iniziale, lo si visita, e verosimilmente non sarà uno stato obiettivo, quindi si aggiungono tutti i suoi figli alla frontiera.
 Si visitano tutti i suoi figli, e per ognuno di questi si aggiungono i conseguenti figli alla frontiera.
