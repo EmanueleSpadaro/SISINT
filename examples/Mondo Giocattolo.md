@@ -1,0 +1,2 @@
+Il Mondo Giocattolo è un ambiente molto semplice utilizzato per spiegare all'interno del corso [[Intelligenza Artificiale#Approccio al Design di Intelligenza Artificiale|come scrivere AI software]], nel quale vogliamo avere un agente che dato qualsiasi tipo di disposizione dei giocattoli, riesca a riprodurre quella che desideriamo.
+![[mondo-giocattolo.png]]
