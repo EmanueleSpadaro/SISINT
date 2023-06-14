@@ -590,6 +590,7 @@ Le strategie di Ricerca per CSP sono:
 - **[[Generate & Test]]**
 - **[[Backtracking Search per CSP]]**
 - **[[Backtracking Search per CSP con Inferenza]]**
+- **[[Backjumping Search]]**
 
 ### Euristiche per CSP
 Le Euristiche per CSP **forniscono degli approcci all'assegnamento** dei valori alle variabili che puntano a renderli più **efficiente**.
@@ -608,6 +609,51 @@ L'inferenza ha lo scopo di ridurre lo spazio di ricerca in modo consistente usan
 
 Esistono diverse modalità di inferenza, noi ne vedremo 4, dalla più semplice alla più complicata in termini di implementazione.
 1. **[[Forward Checking]]** (più un approccio che modalità)
-2. **[[Node Consistency]]**
-3. **[[Arc Consistency]]**
-4. **Path Consistency**
+2. **[[Node Consistency]]**, anche detta 1-consistency
+3. **[[Arc Consistency]]**, anche detta 2-consistency
+4. **[[Path Consistency]]**, anche detta 3-consistency
+
+In generale, si parla di **K-Consistency**:
+> Se per ogni sottoinsieme di ($k-1$) variabili e per ogni loro assegnamento consistente, è possibile identificare un assegnamento per la $k$-esima che è consistente con tutti gli altri, il CSP è detto **Fortemente Consistente**.
+> Un **CSP Fortemente Consistente è risolvibile in tempo lineare** $O(n\ d)$ dove $n$ è il numero delle variabili e $d$ il numero dei valori.
+
+### Vincoli Speciali
+I Vincoli Speciali fanno fortemente uso del [[Conflict Set]].
+![[Conflict Set]]
+
+I Vincoli Speciali sono:
+- **ALL DIFFERENT**: se ho $n$ variabili e $m$ valori con $m < n$, ed valori delle variabili elencate devono essere tutti differenti, il problema non è risolvibile e non vale la pena spendere tempo a risolverlo.
+- **AT MOST**: : le attività $A_1, …, A_k$ possono impegnare complessivamente al più $N$ risorse
+
+# Rappresentazione della Conoscenza e Ragionamento Automatico
+
+I dati sono classificabili nel seguente modo:
+- **Dati**: dati nudi e crudi, come quelli recepiti dai nostri sensi
+- **Informazione**: il fatto che un simbolo che abbiamo recepito con la vista sia una lettera
+- **Conoscenza**: il fatto che sia una lettera ci permettere di supporre che appartenga ad un alfabeto
+
+Fare **Ragionamento Automatico** significa partire da una **Base di Conoscenza di Partenza** e degli **Elementi Percettivi**, e attraverso dei processi di trasformazione produrre "nuova conoscenza".
+In realtà, più che "nuova conoscenza" nel vero senso della parola, **permette di rendere esplicita la conoscenza implicita che la base di conoscenza di partenza dà**.
+
+Un esempio di ragionamento automatico potrebbe essere il seguente:
+- Tutte i cetacei vivono in mare
+- Tutte le balene sono cetacei
+- *Allora,* tutte le balene vivono in mare
+
+Da questo esempio possiamo ottenere uno **schema di conoscenza**:
+- Tutti gli A hanno P
+- Tutti gli B sono A
+- *Allora,* tutti gli B hanno P
+
+Questo è un esempio di ragionamento logico detto [Sillogismo](https://it.wikipedia.org/wiki/Sillogismo).
+Questo tipo di ragionamento ha delle regole rigide, e se ha delle regole rigide, allora è automatizzabile e questo per noi diventa molto interessante.
+
+Al fine di poter rappresentare la conoscenza necessito di
+1. Linguaggio particolare per rappresentare la conoscenza
+2. Regole o Schemi per esplicitare nuova conoscenza precedentemente implicita
+3. Algoritmi, *per automatizzare il processo di esplicitare in grado di poter applicare queste regole*
+
+
+
+
+

@@ -1,4 +1,4 @@
-E' un [[Intelligenza Artificiale#Modalità di Inferenza|approccio alla propagazione delle informazioni]] dopo l'assegnamento di un valore ad una variabile.
+E' un [[Intelligenza Artificiale#Modalità di Inferenza|approccio alla propagazione delle informazioni]] dopo l'assegnamento di un valore ad una variabile. E' anche utilizzato per calcolare il [[Conflict Set]].
 
 Il forward checking consiste nell'**aggiornare** la tabella di **valori possibili dei nodi adiacenti a quello appena assegnato** nel **[[Grafo dei Vincoli]]**.
 
