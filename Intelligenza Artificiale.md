@@ -114,7 +114,7 @@ La risoluzione automatica dei problemi coinvolge diverse discipline:
 **La realtà che si vuole trattare con tecniche di risoluzione automatiche di problemi deve poter essere astratta in stati tra i quali transire**.
 
 - **Stato**: condizione corrente
-- **Transazione**: passaggio di stato da uno corrente al successivo attraverso un'azione.
+- **Transizione**: passaggio di stato da uno corrente al successivo attraverso un'azione.
   Se esiste uno stato dal quale una stessa azione porta a stati differenti, si parla di *non determinismo*.
 - **Obiettivo**: stato che si vuole raggiungere. Ogni stato obiettivo è equivalente a tutti gli altri. Opzionalmente è possibile introdurre anche un valore di prestazione o costo per ottenere una soluzione ottimale.
   L'**Insieme degli Stati Obiettivo** è composto da tutti gli stati che godono della proprietà di essere obiettivo.
@@ -626,11 +626,12 @@ I Vincoli Speciali sono:
 - **AT MOST**: : le attività $A_1, …, A_k$ possono impegnare complessivamente al più $N$ risorse
 
 # Rappresentazione della Conoscenza e Ragionamento Automatico
+Questa branchia deriva dall'Inglese **KRR**: Knowledge Rappresentation Reasoning.
 
 I dati sono classificabili nel seguente modo:
 - **Dati**: dati nudi e crudi, come quelli recepiti dai nostri sensi
 - **Informazione**: il fatto che un simbolo che abbiamo recepito con la vista sia una lettera
-- **Conoscenza**: il fatto che sia una lettera ci permettere di supporre che appartenga ad un alfabeto
+- **Conoscenza**: il fatto che sia una lettera ci permettere di supporre che appartenga ad un alfabeto.
 
 Fare **Ragionamento Automatico** significa partire da una **Base di Conoscenza di Partenza** e degli **Elementi Percettivi**, e attraverso dei processi di trasformazione produrre "nuova conoscenza".
 In realtà, più che "nuova conoscenza" nel vero senso della parola, **permette di rendere esplicita la conoscenza implicita che la base di conoscenza di partenza dà**.
@@ -653,7 +654,95 @@ Al fine di poter rappresentare la conoscenza necessito di
 2. Regole o Schemi per esplicitare nuova conoscenza precedentemente implicita
 3. Algoritmi, *per automatizzare il processo di esplicitare in grado di poter applicare queste regole*
 
+Al fine di poter immagazzinare delle informazioni, dobbiamo trovare una forma per mantenerle in memoria all'interno della **Knowledge Base** (Base di Conoscenza) **in forma dichiarativa**.
+
+## Knowledge Base
+
+La Knowledge Base è la base di conoscenza di un agente che lo informa del mondo circostante.
+Data una base di conoscenza $KB_0$, ogni qualvolta un agente effettua della **percezione del mondo circostante**, migliora la propria conoscenza.
+La Knowledge Base è una rappresentazione astratta della realtà, non coincide con essa, ma è strutturata in modo tale da tener conto delle informazioni utili per l'agente.
+
+$$\forall i\ \text{KB}_i + \text{PERC}_i + \text{AZIONE}_i = \text{KB}_{i+1}$$
+Le operazioni fondamentali che un agente può effettuare con la propria Knowledge Base sono:
+- $\text{TELL}(\text{KB}_i, \text{PERC}_i)\rightarrow \text{KB}_{i+1}$: informa la Knowledge Base all'istante $i$ delle informazioni ottenute attraverso la percezione, andando ad ottenere una Knowledge Base aggiornata e magari con più informazioni
+- $\text{ASK}(\text{KB}_i, \text{QUERY})$: chiede alla Knowledge Base all'istante $i$ all'azione da effettuare
+
+Consapevoli del fatto che la Knowledge Base sia un'astrazione della realtà, vogliamo comunque che la manipolazione (**inferenza**) di quest'ultima, magari per ottenere nuova conoscenza, sia una **manipolazione della conoscenza corretta**: qualunque conclusione tratta dall'agente deve avere un corrispettivo nella realtà effettiva.
+
+Prendendo in esame la formula $x+y=4$, questa è una *Rappresentazione Astratta*: di per sé non è né vera, né falsa. Per essere valutata con *Vero o Falso* deve essere "ancorata al mondo": assegniamo per esempio dei valori che ci permettano di rispondere con *Vero o Falso*.
+
+> **Modello**: attribuzione di valori che definisce il valore di verità di una formula.
+> In generale vale la definizione sopracitata, ma alcune volte useremo la seguente.
+> Un modello $m$ è detto *modello della formula $F \iff$* rende $F$ vera.  
+
+### Relazione tra le formule
+
+>Date due formule $F_1$ e $F_2$, si dice che $F_1$ è **conseguenza logica di** $F_2$ se ogni modello $m$ di $F_1$ è anche un modello di $F_2$.
+$$F_1 \vDash F_2$$
+>La **Conseguenza Logica** è detta **Relazione Semantica**: ovvero una relazione che intercorre tra insiemi dei modelli delle formule.
 
 
+>Date due formule $F_1$ e $F_2$, queste sono dette **equivalenti** con
+$$F_1\equiv F_2$$  se $F_1\vDash F_2 \land F_2 \vDash F_1$, e cioè se l'insieme dei modelli di $F_1$ coincide con quello di $F_2$.
 
+>Data una formula $P$ questa è detta **valida** se è vera per ogni modello. (**Tautologia**)
 
+> Data una formula $P$ questa è detta **contraddizione** se è non è vera in nessun modello. (**Formula Insoddisfacibile**)
+
+> Data una formula $P$ questa è detta **soddisfacibile** se $\exists m$ modello di $P$
+
+### Model Checking
+Il Model Checking è un modo algoritmico per determinare se una formula $F_1$ sia una conseguenza logica di $F_2$.
+1. Enumera tutti gli i modelli di $F_1$
+2. Verifica che questi siano tutti modelli di $F_2$
+3. Se sì, la conseguenza logica è verificata, altrimenti non ve n'è.
+
+Il Model Checking ha un problema che consiste nel dover generare tutti i modelli di $F_1$, quindi, supponendo di avere:
+- $d$, numero dei valori possibili delle variabili
+- $n$, numero delle variabili della formula
+
+incappa nel dover generare $d^n$ modelli, quindi ha una complessità esponenziale.
+
+### Sillogismi: Modus Ponens
+Il Modus Ponens è un particolare sillogismo dove, date $\alpha,\beta$ formule:
+- $\alpha \Rightarrow \beta$, *per esempio "Tutti gli uomini sono mortali"*
+- $\alpha$, *per esempio "Socrate è un uomo"*
+possiamo trarre una conclusione
+- $\beta$, *per esempio "Socrate è mortale"*
+
+Abbiamo quindi applicato una **Regola di Inferenza**.
+
+### Correttezza di un Algoritmo di Inferenza
+Un algoritmo di inferenza è corretto solo quando deriva formule che sono conseguenze logiche delle premesse.
+$$\forall \text{KB} \text{ se } \text{KB}\vdash A, \text{ allora } \text{KB}\vDash A$$
+e cioè, se da $\text{KB}$ è possibile inferire $A$, allora $A$ è conseguenza logica di $\text{KB}$.
+
+### Completezza di un Algoritmo di Inferenza
+E' più complicata da dimostrare, e non lo si può fare sempre.
+$$\forall \text{KB} \text{ se } \text{KB}\vDash A, \text{ allora } \text{KB}\vdash A$$
+e cioè, se $A$ è conseguenza logica di $\text{KB}$, allora è possibile inferire $A$ da $\text{KB}$.
+
+## Logica Proposizionale
+La Logica Proposizionale è un **linguaggio attraverso il quale è possibile rappresentare conoscenza**.
+Questo linguaggio ha una grammatica ben precisa.
+- **Formula**:
+  - **Atomica**: $\text{TRUE}|\text{FALSE}|$Simbolo
+  - **Complessa**: (in ordine di importanza)
+    1.  $\lnot \text{FORMULA}$
+    2. $\text{FORMULA}\land \text{FORMULA}$
+    3. $\text{FORMULA}\lor \text{FORMULA}$
+    4. $\text{FORMULA} \Rightarrow \text{FORMULA}$
+    5. $\text{FORMULA}\iff \text{FORMULA}$
+- **Simboli**: etichette che mappiamo ad una formula
+
+Ai fini di introdurre alla logica proposizionale, utilizzeremo questa base di conoscenza di partenza:
+- $R1)\ \text{PIOVE}\Rightarrow \text{ATMOSFERA-UMIDA}$
+- $R2)\ \text{NOTTE} \lor \lnot \text{VENTO} \Rightarrow \text{ATMOSFERA-UMIDA}$
+- $R3)\ \text{ATMOSFERA-UMIDA}\Rightarrow (\text{PRATO-BAGNATO}\land \text{STRADA-BAGNATA})$
+- $R4)\ \text{INNAFFIATORE-ON}\Rightarrow \text{PRATO-BAGNATO}$
+- $R5)\ \text{PIOVE}\Rightarrow \text{OMBRELLO-APERTO}$
+- $R6)\ \text{SOLE}\land \text{VENTO}\Rightarrow \text{INNAFFIATORE-ON}$
+- $R7)\ \text{SOLE}\land \text{VENTO}\Rightarrow \text{ATMOSFERA-ASCIUTTA}$
+- $R8)\ \text{SOLE}\Rightarrow \lnot \text{NOTTE}$
+- $R9)\ \text{NOTTE}\Rightarrow \lnot \text{SOLE}$
+- $R10)\ \text{ATMOSFERA-ASCIUTTA}\Rightarrow \lnot \text{ATMOSFERA-UMIDA}$
