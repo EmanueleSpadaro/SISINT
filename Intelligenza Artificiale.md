@@ -746,3 +746,120 @@ Ai fini di introdurre alla logica proposizionale, utilizzeremo questa base di co
 - $R8)\ \text{SOLE}\Rightarrow \lnot \text{NOTTE}$
 - $R9)\ \text{NOTTE}\Rightarrow \lnot \text{SOLE}$
 - $R10)\ \text{ATMOSFERA-ASCIUTTA}\Rightarrow \lnot \text{ATMOSFERA-UMIDA}$
+
+L'implicazione è un caso particolare, infatti è utilizzata diversamente in base al ragionamento che viene fatto:
+- $Fido\ è\ un\ cane \Rightarrow Fido\ è\ un\ mammifero$, configura un **ragionamento ontologico**
+- $Marco\ ha\ vinto\ il\ match \Rightarrow Marco\ ha\ giocato\ il\ match$, configura un **ragionamento temporale**
+- $John\ è\ stato\ condannato\ per\ furto \Rightarrow Il\ furto\ è\ un\ crimine$, configura un **ragionamento causale**
+
+### Theorem Proving
+Il Thereom Proving pone le sue basi su due elementi:
+- **[[Teorema di Deduzione]]**
+- **Dimostrazione per Refutazione**: approccio dove, per dimostrare che $A\vDash B$, si utilizza la [[Regola di Risoluzione]] con $A \land \lnot B$
+
+E' decisamente più efficiente del [[#Model Checking]] in quanto fa un forte utilizzo delle [[Regola di Inferenza|Regole di Inferenza]] anziché generare l'intera enumerazione di modelli possibili.
+
+
+## Algoritmo di Inferenza
+Un algoritmo di inferenza è un algoritmo ottenuto dall'unione di
+- [[Regola di Inferenza|Regole di Inferenza]]
+- **Algoritmo di Ricerca**, *solitamente la [[Ricerca in ampiezza]]*
+
+Un algoritmo di inferenza risolve problemi nello spazio degli stati nella seguente forma:
+- $s_i$: ${KB}$, *knowledge base iniziale o background knowledge*
+- $f_s$: utilizzo di una [[Regola di Inferenza]]
+- $t_o$: risolvente equivale alla clausola vuota $\square$
+- $f_c$: inutilizzata
+
+### CP-Risoluzione
+Un esempio di algoritmo di inferenza è quello di CP-Risoluzione (CP da Calcolo Proposizionale).
+```
+CP-Risoluzione(KB, A) RETURNS true/false alla domanda (A è conseguenza logica di KB?)
+clausole <- {KB in CNP e not A}
+new <- { }
+LOOP DO {
+	FOREACH Ci,Cj in clausole{
+		risolvente <- IR-Risoluzione(Ci, Cj)
+		if(risolvente is [] clausola vuota)
+			return true
+		new <- new U risolvente
+	}
+	if (new incluso in clausole) //se non ho prodotto nulla di nuovo
+		return false
+	clausole <- clausole U risolvente
+}
+```
+
+## Clausole di Horn
+Le Clausole di Horn sono delle clausole di forma ristretta rispetto alle clausole normali (per intenderci le disgiunzioni di letterali).
+
+Un clausola è detta **Clausola di Horn** se:
+- E' una disgiunzione di letterali, *per esempio* $\lnot A \lor B \lor C \lor \lnot D$
+- Ha **un solo letterale positivo**, **tutti gli altri devo essere preceduti da una negazione**
+
+E' detta **Clausola Definita** una clausola di Horn nella forma $$ \lnot A\lor \lnot B \lor \lnot C \lor D$$
+E' detta **Fatto** una clausola di Horn composta da un solo letterale positivo $$D$$
+Possiamo notare come attraverso una serie di equivalenze è possibile ricondurre una clausola definita ad una implicazione della forma
+$$ \lnot A\lor \lnot B \lor \lnot C \lor D \equiv \lnot(A\land B\land C)\lor D\equiv A \land B\land C \Rightarrow D$$
+
+Questa implicazione $A\land B\land C \Rightarrow D$ è alla base della **Programmazione Logica** e sono particolari clausole sulle quali è possibile applicare dei **meccanismi di ragionamento con complessità lineare** in funzione del numero di clausole.
+
+## Forward Chaining
+E' una tecnica di ragionamento **guidata dai dati** che utilizza il [[#Sillogismi Modus Ponens|Modus Ponens]] come unica [[Regola di Inferenza]] utilizzata che permettono di **dimostrare formule atomiche**.
+
+Dati due fatti, $A,B$, e la seguente base di conoscenza
+![[Esempio di Clausole di Horn]]
+otterremo un **Albero And-Or** come il seguente, per dimostrare $KB \land Q$. [[albero-and-or-forward-chaining.png|Esempio]].
+
+La complessità temporale è $O(n)$.
+
+## Backward Chaining
+E' una tecnica di ragionamento analoga al Forward Chaining che **applica il Modus Ponens al contrario**.
+E' facilmente implementabile attraverso uno **Stack (LIFO)** .
+
+Supponiamo di voler dimostrare $G_2$: il backward chaining va a cercare una clausola che implichi $G_2$.
+Per esempio: $A \land G_1 \Rightarrow G_2$.
+Il backward chaining procede quindi a verificare se $A$ e $G_1$ siano vere.
+Se per esempio $A$ è un dato, quindi è da assumere per vero, allora il suo goal per dimostrare che $G_2$ sia vero è quello di dimostrare $G_1$.
+
+Mediamente è più efficiente del [[#Forward Chaining]] in quanto va ad attivare meno clausole, è infatti detto **mediamente meno che lineare**.
+
+# Logica del Prim'Ordine (FOL)
+La Logica del Primo Ordine, o **First Order Logic** è **linguaggio in grado di rappresentare della conoscenza** che cerca di andare a risolvere due problemi della [[#Logica Proposizionale]]:
+- Bassa espressività
+- Impossibilità di rappresentare in modo compatto
+
+Permette di ragionare su **oggetti e relazioni** ed ha elementi sintattici più variegati quali:
+- **Simboli di Costante**: *per esempio,  John, Richard, ... , in riferimento a oggetti*
+- **Simboli di Predicato**: relazioni che rispondono con vero o falso, *per esempio Fratello(John, Richard)*
+- **Simboli di Funzione**: identifica un oggetto nel mondo che non ha un nome, *per esempio GAMBA(x) è la Gamba di x, CASA(x) è la Casa di x*
+- **Simboli di Variabile**: simboli di quantificazione, sono solo $\forall$ e $\exists$
+- **Connettivi**: $\lnot \land \lor \Rightarrow \iff$
+- **Punteggiatura**: $(\ )$
+- **Uguaglianza**: $=$
+
+## Modello FOL
+Il modello $m$ della [[#Logica del Prim'Ordine (FOL)]] è un modello
+$$ m =\ <D, I >$$
+dove:
+- **D**: **Dominio** composto da Oggetti, e Relazioni espresse come insiemi di tuple.
+- **I**: **Interpretazione**, è il mapping che dà significato ai simboli che compaiono nelle formule quali:
+  - Costanti, *ovvero riferimenti a degli oggetti*
+  - Predicati, *ovvero relazioni che restituiscono vero o falso*
+  - Funzioni, *ovvero riferimenti a degli oggetti senza nome oppure riferimenti ad oggetti in relazione come nel caso di Padre(John)*
+
+Un esempio di modello FOL è quello dei [[Regni dell'Inghilterra]].
+
+Il numero di modelli in Logica del Prim'Ordine è potenzialmente infinito, in quanto possiamo chiamare funzioni in maniera ricorsiva senza limiti.
+
+E' detto **Termine Ground** un termine in Logica del Prim'Ordine che **non contiene variabili**.
+
+#### Database Semantics
+E' un **approccio alla semantica** per la **Programmazione Logica** che adotta queste regole:
+- **Unicità dei Nomi**: *assumiamo che costanti diverse si riferiscano a oggetti del dominio diversi*
+- **Chiusura del Dominio**: *un modello non contiene più elementi di quelli nominati dalle costanti*
+- **Assunzione di Mondo Chiuso**: *assumiamo che le formule atomiche delle quali non si conosce la verità siano false*
+
+E' usata quando siamo sicuri dell'identità di tutti gli elementi.
+**Riduce il numero dei modelli possibili, rendendoli tipicamente finiti**.
+
