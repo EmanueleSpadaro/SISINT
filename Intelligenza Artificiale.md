@@ -863,3 +863,188 @@ E' un **approccio alla semantica** per la **Programmazione Logica** che adotta q
 E' usata quando siamo sicuri dell'identità di tutti gli elementi.
 **Riduce il numero dei modelli possibili, rendendoli tipicamente finiti**.
 
+## Ragionamento su FOL
+La modalità di ragionamento su FOL differisce rispetto a quella della [[#Logica Proposizionale]] in termini di tipologia di interrogazione della base di conoscenza:
+- $\text{ask}(\text{KB}, \text{Re(John)})$: interrogazione con **termini ground**, **risponde con vero/falso**
+- $\text{ask}(\text{KB}, \text{Re}(x))$:  interrogazione **con variabili**.
+  **Intrinsecamente nasconde un $\exists x$** che rispetta il predicato passato, e quindi necessita di un **meccanismo di sostituzione** che sostituisca ad $x$ un valore per testarlo. 
+  *In questo particolare caso, è come se si nascondesse un'esistenziale* $\exists x\ |\ (\text{Re}(x))$.
+
+Una **sostituzione** $\Theta$ è un particolare assegnamento di termini ground $g_i$ a delle variabili
+$$\Theta = \{x/g_1, y=g_2, ...\}$$
+*e.g.: dato $F = \text{Fratello}(x,y)$ una possibile $\Theta_1 = \{x = \text{John}, y=\text{Richard}\}, \Theta_2=\{x = \text{John}\}$*
+Per enfatizzare l'applicazione di una sostituzione $\Theta_i$ ad una formula $F$ si usa la sintassi $F/O_i$.
+*e.g.: $F/{\Theta}_1=\text{Fratello}(\text{John},\text{Richard}), F/\Theta_2=\text{Fratello}(\text{John}, y)$* 
+
+Esistono due approcci al ragionamento su FOL:
+- **[[Proposizionalizzazione]]**
+- **[[Lifting]]**
+
+### Modus Ponens Generalizzato
+E' una [[Regola di Inferenza]] adattata alla [[#Logica del Prim'Ordine (FOL)]]
+$$\frac{p'_1, p'_2, ..., p'_n\ \ p_1 \land p_2 \land ... \land p_n \Rightarrow q}{q\Theta}$$
+dove:
+- $p'_i$: è legata a $p_i$ tramite una sostituzione $\Theta$
+- $\Theta$: sostituzione tale per cui $p'_i\Theta=p_i\Theta\ \forall i \in [1, n]$ 
+
+### Unificatore
+Un unificatore è un algoritmo di ricerca $\text{UNIFY}(F_1,F_2)=\Theta$ tale per cui $F_1\Theta=F_2\Theta$.
+
+
+
+## Metodo di Risoluzione per FOL
+Il metodo di Risoluzione per FOL ha come requisito di ritrovarsi delle formule in [[Forma Normale Congiuntiva (CNF)]].
+
+$$\text{Tutti coloro che amano gli animali sono amati da qualcuno}$$
+$$ \forall x[\forall y\ \text{Animale}(y)\Rightarrow \text{Ama}(x,y)] \Rightarrow [\exists y\ \text{Ama}(y,x)] $$
+Notiamo che compaiono degli operatori che le clausole non prevedono, come le implicazioni.
+1. Si eliminano le implicazioni
+2. Si spostano le negazioni internamente
+3. Si standardizzano le variabili *vedi che $y$ sia usato in scope differenti*
+4. Skolemizzazione: consiste nell'usare delle **funzioni di Skolem**, ovvero **funzioni nelle variabili quantificate universalmente**
+5. Cancelliamo le quantificazioni universali $\forall$
+6. Distribuzione delle $\lor$ su $\land$: passiamo alla[[Forma Normale Congiuntiva (CNF)]]
+
+## Relazione tra funzioni di Skolem e costanti di Skolem
+Le funzioni di Skolem si introducono quando abbiamo un quantificatore esistenziale in una formula quantificata universalmente, come per esempio:
+$$\forall x_1,x_2, ... \exists z\ F(z, x_1, x_2, ...) \rightarrow S_1(x_1, x_2, ...)$$
+associando il valore della funzione il valore assunto dalla variabile quantificata esistenzialmente nel caso nel caso di una tupla specifica di $x_1, x_2, ...$
+
+Le costanti di Skolem si introducono quando non vi sono quantificatori universali, quindi la funzione di Skolem passerebbe da $F(z, x_1, x_2, ...)$ a $F(z)$, da qui **costante**.
+
+## Regola di Risoluzione in Logica del Prim'Ordine
+
+Abbiamo delle disgiunzioni di letterali *(formula atomica eventualmente negata)* $$\frac{l_1 \lor\ ...\ \lor l_k\ \ m_1\lor ...\lor m_n}{\text{SUBST}(\Theta, l_1\lor...\lor l_{i-1}\lor l_{i+1}\lor...\lor l_k \lor m_1\lor...\lor m_{i-1}\lor m_{i+1}\lor...\lor m_k)}$$
+dove $\Theta$ è un'[[#Unificatore]] di $l_i$ e $\lnot m_j$.
+*Per esempio:* $l_i = \text{Re}(\text{John}), m_j = \lnot \text{Re}(x)$ con $\Theta = \{x=\text{John}\}$ otteniamo
+$$l_i = \text{Re}(\text{John}), m_j = \lnot \lnot \text{Re}(\text{John})$$
+andando per l'appunto ad unificare le formule.
+
+Un caso curioso è quello di [[Curiosity Killed The Cat]].
+
+
+# Ingegneria della Conoscenza
+Vogliamo comprendere se gli strumenti della Logica Proposizionale e Logica del Prim'Ordine siano adatti a rappresentare insieme di categorie, $\forall x \text{Pallone}(x)$.
+
+- $\text{Member}(instance, of)$: predicato che risponde con true/false se il parametro $instance$ faccia parte della categoria $of$.
+- $\text{is-a}(C_1, C_2)$: predicato che risponde con true/false se il parametro $C_1$ è **sotto-categoria** di $C_2$.
+- $\text{Part-Of}(C_1, C_2)$: predicato che risponde con true/false se il parametro $C_1$ è **un componente di** $C_2$.
+
+E' detta proprietà una formula della forma
+$$ \text{Member}(x, \text{class}) \Rightarrow \text{Property}(x)$$
+
+Le categorie sono:
+- **Disgiunte**: significa che **due categorie non hanno istanze comuni**, ovvero non condividono alcun elemento in comune.
+  Ad esempio, se consideriamo le categorie "frutta" e "automobili", queste sono disgiunte perché non ci sono elementi che appartengono a entrambe le categorie. Ogni elemento apparterrà solo a una delle due categorie, ma non a entrambe contemporaneamente.
+- **Decomposizioni esaustive**: questo implica che **le categorie considerate coprono tutti gli elementi della sovracategoria**.
+  In altre parole, ogni istanza della sovracategoria appartiene necessariamente a almeno una delle categorie considerate. Ad esempio, se consideriamo la sovracategoria "animali domestici" e le categorie "cani" e "gatti", ogni animale domestico (come un cane o un gatto) apparterrà a una delle due categorie o addirittura ad entrambe.
+- **Partizioni**: implica che **le categorie siano disgiunte** **e** **costituiscano una decomposizione esaustiva**.
+  Ogni elemento della sovracategoria appartiene a una delle categorie e non ci sono elementi che non appartengono a nessuna delle categorie considerate. Ad esempio, se consideriamo la sovracategoria "colori primari" e le categorie "rosso", "blu" e "giallo", ogni colore primario appartiene a una delle tre categorie, e non ci sono colori primari che non rientrano in queste categorie.
+
+L'**ontologia** è il processo di rappresentazione formale e strutturata di concetti, relazioni e proprietà.
+Un'ontologia può essere:
+- **T-BOX**: struttura concettuale.
+  *Per esempio: Madre è sottoclasse di Donna, Madre(X) ⇒ Donna(X)*
+- **A-BOX**: assegnamento di valori effettivi alla struttura concettuale.
+  *Per esempio: Anna è una Madre: Madre(Anna)*
+
+Lo sviluppo di ontologie può essere effettuato tramite **RDF** **(Resource Description Framework)** e **OWL (Web Ontology Language)**.
+
+**OWL prevede 3 costrutti**:
+1. **Entità**: oggetti, categorie e relazioni che costituiscono gli statement.
+   *Per esempio: Maria, donna, Luca, Anna, essere-sposati, studente, persona*
+2. **Assiomi**: gli statement della Knowledge-Base
+   *Per esempio: Maria è una donna, Anna e Luca sono sposati, Luca è uno studente, Luca è una persona*
+3. **Espressioni**: definizioni tramite costruttori di categorie specifiche ed intersezioni
+   *Per esempio: $StudenteUniversitario \equiv Persona \cap Studente$*
+
+Le ontologie $O_1, O_2$ se relazionate, sono classificabili come:
+- **Identiche**: sono la stessa ontologia *(per esempio un’ontologia e la sua copia in un disco mirror)*
+- **Equivalenti**: condividono vocabolario e assiomatizzazione ma sono espresse in linguaggi differenti (esempio: SKOS e RDF)
+- **Estensioni**: O1 estende O2 quando tutti i simboli definiti in O2 sono preservati in O1 insieme alle loro proprietà e relazioni ma non vale il viceversa
+- **Debolmente Traducibili**: $O_{source}$ e $O_{dest}$ due ontologie, è possibile tradurre espressioni $O_{source}$ in espressioni $O_{dest}$ con perdita di informazione *(succede quando un'ontologia implementa un concetto che non è stato implementato nell'altra)*
+- **Fortemente Traducibili**: senza perdita di informazione e senza inconsistenze
+- **Approssimativamente Traducibili**: la perdita di informazione è dovuta a delle inconsistenze *(succede quando un'ontologia implementa un concetto in un modo e l'altra lo implementa in un modo differente o meno preciso, per esempio da "Pianeta con temperatura media di -50°C" a "Pianeta con temperatura fredda")*
+
+
+**Tassonomia**: è la disciplina che si occupa della classificazione gerarchica di elementi.
+
+Tutti i concetti illustrati fino ad ora, concernenti l'ingegneria della conoscenza, sono i seguenti:
+- **Rappresentazione della Conoscenza** $\rightarrow$ **Logica**
+- **Concettualizzazione** $\rightarrow$ **Ontologie/Tassonomie**
+- **Azioni** $\rightarrow$ **Pianificazione**
+
+## Rappresentazione delle Azioni
+La rappresentazione delle azioni è possibile attraverso linguaggi quali il **Situation Calculus** oppure il **PDDL** *(Planning Domain Definition Language)*.
+Noi vedremo il Situation Calculus come linguaggio introduttivo, pur consapevoli della sua inefficienza e relativo inutilizzo al giorno d'oggi.
+
+## Situation Calculus
+Il Situation Calculus introduce i seguenti termini:
+- **Azione**: qualcosa che modifica o influenza il mondo
+- **Situazione**: uno stato, la condizione dell'ambiente in un dato istante, descritta attraverso predicati che sono distinti in:
+   - **Fluenti**: predicati che possono cambiare valore all'interno dello stato con il passare del tempo
+   - **Predicati atemporali**: predicati che non cambiano all'interno dello stato, valgono in eternor
+
+
+Nel Situation Calculus è necessario determinare un **Dominio di Riferimento**.
+Si parte da $S_0$, situazione iniziale, e si determina dal *Repertorio delle Azioni*, quali di queste siano applicabili.
+
+Un'azione è composta da
+- **Precondizioni**: condizioni necessarie per poterla effettuare.
+  Un'azione è detta applicabile se persistono le precondizioni per poterla effettuare.
+- **Effetti**: modifica o influenza che subisce l'ambiente se l'azione viene effettuata
+
+E' possibile implementare le azioni nella [[#Logica del Prim'Ordine (FOL)]] attraverso predicati e funzioni dove $S$ è la situazione attuale:
+- $\text{Applicable}(\text{move}(x,y,z), S)$: predicato vero quando l'azione indicata può essere applicata
+- $\text{Effects}(\text{move}(x,y,z), S)$: complesso di formule / predicati che esplicitano gli effetti che avrebbe l'azione se effettuata
+- $\text{Result}(\text{move}(x,y,z), S)$: funzione che indica la situazione successore
+- $\text{Do}(AS,S):$ dove $AS$ sequenza di azioni, è una funzione in grado di applicare una sequenza di azioni a partire da S
+
+Nel contesto del Situation Calculus, il modo in cui si passa da $S\rightarrow S'$ rappresenta uno stato unico.
+*Per esempio: 1. sono povero, lavoro duramente, sono ricco; 2. sono povero, rapino una banca, sono ricco; portano allo 'stesso stato', ma per il Situation Calculus, essendo che ci siamo arrivati con sequenze di azioni differenti, gli stati di destinazione saranno diversi*
+
+### Frame Problem nel Situation Calculus
+Il Frame Problem è un problema nel Situation Calculus che consiste nel fatto che la definizione degli effetti sul mondo in un'azione esplicitano solo le modifiche che effettua, e non informa su tutto il resto che rimane invariato.
+Riguarda l'efficace rappresentazione e aggiornamento delle informazioni nel contesto di un ambiente dinamico, dove è necessario determinare cosa cambia e cosa rimane costante in una situazione senza specificare esplicitamente ogni singolo fatto immutabile.
+
+E' stato trattato con approcci differenti:
+1. **Assiomi di Frame**: si rappresentano tutti i fluenti che non cambiano.
+   *Per esempio, se ho un cesto di frutta con una mela e una banana, e mangio la banana, devo specificare che la mela è rimasta nel cesto di frutta*.
+   E' estremamente inefficiente perché bisogna specificare tantissimi dettagli che non concernono l'azione.
+1. **Assioma di Stato Successore**: è un unico assioma in grado di catturare tutti ciò che non è stato modificato dove
+   $\text{Azione-Applicabile}\Rightarrow [(\text{Fluente vero nella situazione risultante}) \iff$ $(\text{L'azione lo ha reso vero})\lor(\text{Era vero e non lo ha modificato})]$
+
+Un **Goal Complesso** è un goal composto da due o più sotto-goal.
+![[Pasted image 20230619172311.png]]
+
+# Agenti (Problemi di Apprendimento)
+Sappiamo che l'agente una potente astrazione software che esegue il seguente ciclo:
+1. Percepisco
+2. Delibero
+3. Agisco
+
+Tale astrazione è disgiunta dal termine "intelligente" come abbiamo potuto vedere.
+
+Un agente può essere classificato in questa maniera:
+- **Agente Reattivo Semplice**: percepisce lo stato dell'ambiente, lo valuta secondo delle condizioni determinate, e determina quale azione effettuare in base alla condizione.
+  Ha una percezione completa e l'ambiente è completamente osservabile.
+  *Per esempio un termostato: percepisce la temperatura, se è minore di quella impostata riscalda, se è uguale non fa nulla, e se è maggiore raffredda*.
+- **Agente Reattivo Basato su Modello**: è un agente che effettua le azioni avendo a disposizione i dati di percezione, come per gli agenti reattivi semplici, e delle informazioni di stato
+  *Nel Mondo dell'Aspirapolvere l'aspirapolvere tiene conto della posizione*
+- **Agente Guidato dall'Utilità**: è un agente che utilizza una funzione che informa su "quanto è felice".
+  Utilizza un criterio per determinare il modo in cui l'agente debba perseguire l'obiettivo.
+  *Supponendo di essere in una Località_1 e di voler andare in località_2; potrebbe decidere di scegliere il percorso che fa risparmiare più benzina, che fa un giro panoramico, oppure il percorso più sicuro*.
+- **Agente che apprende**: è un agente che modifica la propria base di conoscenza durante l'esecuzione.
+
+I problemi di apprendimento che affronteremo sono concernenti una specifica attività, la **classificazione**.
+La classificazione è un processo in cui un agente, data un'istanza (un oggetto, una persona, un animale), determina l'etichetta di quest'ultimo.
+$$\text{Istanza} \rightarrow [?] \rightarrow \text{Etichetta-Categoria} $$ 
+Un possibile modo per riconoscere un'istanza è quello di **fornire un learning set** composto da tante istanze della categoria che vogliamo implementare, e darlo in pasto ad un algoritmo di apprendimento che fornisce un **modello**.
+Il processo per passare da un Learning Set ad un Modello attraverso un Algoritmo di Apprendimento è detto **induzione**.
+
+
+
+
+
+
+****
